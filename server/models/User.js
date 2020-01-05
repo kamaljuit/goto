@@ -16,7 +16,7 @@ const UserSchema = new Schema({
     unique: true
   },
   img: String,
-  rooms: [
+  urls: [
     {
       type: Schema.Types.ObjectId,
       ref: "Room"
@@ -28,6 +28,12 @@ const UserSchema = new Schema({
     trim: true,
     required: [true, "A password is required!"],
     select: false
+  },
+  membership:{
+      type:String,
+      enum:["free","silver","gold","platinum"],
+      required:[true,"User must have a subscription plan"],
+      default:"free"
   }
 });
 
