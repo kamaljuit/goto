@@ -7,7 +7,7 @@ const UserSchema = new Schema({
     required: [true, "A user must have a name!"],
     trim: true,
     unique: true,
-    minlength:[3,"A name cannot be smaller than 3 characters!!"]
+    minlength: [3, "A name cannot be smaller than 3 characters!!"]
   },
   email: {
     type: String,
@@ -16,6 +16,11 @@ const UserSchema = new Schema({
     unique: true
   },
   img: String,
+  urlLimit: {
+    type: Number,
+    required: true,
+    default: 10
+  },
   urls: [
     {
       type: Schema.Types.ObjectId,
@@ -29,11 +34,11 @@ const UserSchema = new Schema({
     required: [true, "A password is required!"],
     select: false
   },
-  membership:{
-      type:String,
-      enum:["free","silver","gold","platinum"],
-      required:[true,"User must have a subscription plan"],
-      default:"free"
+  membership: {
+    type: String,
+    enum: ["free", "silver", "gold", "platinum"],
+    required: [true, "User must have a subscription plan"],
+    default: "free"
   }
 });
 
@@ -48,6 +53,23 @@ UserSchema.methods.comparePassword = async function(
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
+
+UserSchema.pre("save", function(next) {
+  switch (this.membership) {
+    case "free":
+      this.urlLimit = 10;
+      break;
+    case "silver":
+      this.urlLimit = 20;
+      break;
+    case "gold":
+      this.urlLimit = 50;
+      break;
+    case "platinum":
+      this.urlLimit = Infinity;
+  }
+  next();
+});
 
 const User = mongoose.model("User", UserSchema);
 
