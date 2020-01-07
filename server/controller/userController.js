@@ -1,6 +1,5 @@
 const Url = require("../models/Url");
 const User = require("../models/User");
-const AppError = require("../utils/AppError");
 const sendResponse = (res, data, statusCode) => {
   res.status(statusCode).json({
     data
@@ -45,5 +44,3 @@ exports.updateUserSubscription = async (req, res, next) => {
     next(error);
   }
 };
-
-

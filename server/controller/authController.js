@@ -1,5 +1,4 @@
-const User = require("../models/users");
-const AppError = require("../utils/AppError");
+const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
 const sendMail = require("../utils/sendMail");
@@ -45,7 +44,7 @@ exports.signUp = async (req, res, next) => {
 
     user = await User.create(incomingUser);
 
-    if (!user) next(new AppError("Cannot create a new user!", 401));
+    if (!user) next(new Error("Cannot create a new user!"));
 
     req.user = user;
     await signToken(user, res);
@@ -54,16 +53,14 @@ exports.signUp = async (req, res, next) => {
     if (error.code === 11000) {
       if (error.message.includes("email"))
         next(
-          new AppError(
-            "Provided Email exists! Login or use a different Email Address",
-            400
+          new Error(
+            "Provided Email exists! Login or use a different Email Address"
           )
         );
       else
         next(
-          new AppError(
-            "Provided Username Exists!. Please use a different User name",
-            400
+          new Error(
+            "Provided Username Exists!. Please use a different User name"
           )
         );
     }
@@ -83,7 +80,7 @@ exports.login = async (req, res, next) => {
     !(await user.comparePassword(req.body.password, user.password))
   ) {
     console.log(user, "Debug");
-    return next(new AppError("Email or Password incorrect!"));
+    return next(new Error("Email or Password incorrect!"));
   }
   req.user = user;
   await signToken(user, res);
@@ -108,7 +105,7 @@ exports.protect = async (req, res, next) => {
     (!req.headers.authorization ||
       !req.headers.authorization.startsWith("Bearer"))
   ) {
-    return next(new AppError("You are not authenticated!", 401));
+    return next(new Error("You are not authenticated!"));
   }
   let token = "";
   if (req.cookies.jwt) {
@@ -120,7 +117,7 @@ exports.protect = async (req, res, next) => {
   console.log(token);
   if (!token) {
     //
-    return next(new AppError("Invalid token!", 401));
+    return next(new Error("Invalid token!"));
   }
   const payload = jwt.verify(token, process.env.JWT_SECRET);
   //check whether the password was changed after the token was issued

@@ -24,7 +24,7 @@ const UserSchema = new Schema({
   urls: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Room"
+      ref: "Url"
     }
   ],
   password: {
@@ -43,6 +43,7 @@ const UserSchema = new Schema({
 });
 
 UserSchema.pre("save", async function(next) {
+  if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
