@@ -3,7 +3,8 @@ import UrlTypes from "./url.types";
 Format of url in urls list is [{originalUrl:"",shortenedUrl:""}]
 */
 const INITIAL_STATE = {
-  urls: []
+  urls: [],
+  error: undefined
 };
 
 /*
@@ -32,6 +33,12 @@ const UrlReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         urls: action.payload
+      };
+
+    case UrlTypes.SET_URL_ERROR:
+      return {
+        ...state,
+        error: action.payload
       };
     default:
       return state;

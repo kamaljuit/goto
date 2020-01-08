@@ -2,9 +2,9 @@ import React from "react";
 
 function TextOutputField(props) {
   return (
-    <div>
+    <span className={props.className} style={props.style}>
       <span>{props.value}</span>
-    </div>
+    </span>
   );
 }
 

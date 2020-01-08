@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1)
   },
   textField: {
-    width: 200
+    width: 300
   }
 }));
 
@@ -24,6 +24,7 @@ const FormInput = props => {
         type={props.type}
         value={props.value}
         onChange={props.handleChange}
+        startAdornment={props.startAdornment}
       />
     </FormControl>
   );

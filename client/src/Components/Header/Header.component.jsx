@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -6,6 +7,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import MenuIcon from "@material-ui/icons/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import { logoutUser } from "../../Redux/User/user.action";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -22,12 +24,14 @@ const useStyles = makeStyles(theme => ({
     }
   }
 }));
-
-export default function PrimarySearchAppBar(props) {
+function Header(props) {
   const classes = useStyles();
   return (
     <div className={classes.grow}>
-      <AppBar position="static">
+      <AppBar
+        position="static"
+        style={{ backgroundColor: "darkcyan", fontSize: "20px" }}
+      >
         <Toolbar>
           <IconButton
             edge="start"
@@ -43,7 +47,11 @@ export default function PrimarySearchAppBar(props) {
 
           <div className={classes.grow} />
 
-          {props.user ? (
+          {/* {props.user ? (
+            
+//Complete this feature later
+
+
             <div>
               <IconButton
                 edge="start"
@@ -58,7 +66,7 @@ export default function PrimarySearchAppBar(props) {
                 )}
               </IconButton>
             </div>
-          ) : null}
+          ) : null} */}
           <IconButton
             edge="start"
             className={classes.menuButton}
@@ -68,7 +76,7 @@ export default function PrimarySearchAppBar(props) {
             {props.user ? (
               <span
                 onClick={() => {
-                  //   props.dispatch(signoutUser());
+                  props.dispatch(logoutUser());
                 }}
               >
                 SignOut <AccountCircle />
@@ -82,3 +90,11 @@ export default function PrimarySearchAppBar(props) {
     </div>
   );
 }
+
+const mapStateToProps = state => {
+  return {
+    user: state.User.user
+  };
+};
+
+export default connect(mapStateToProps)(Header);

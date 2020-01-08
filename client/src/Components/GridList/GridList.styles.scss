@@ -1,0 +1,27 @@
+.grid-list-root {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+  //   overflow: hidden;
+
+  .element {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+
+    .url {
+      padding: 10px;
+      margin: 0 10px;
+    }
+
+    .text {
+      background: whitesmoke;
+      border-radius: 15px;
+      padding: 10px;
+      margin: 0 10px;
+    }
+  }
+}
+
+// ['#43A19E', '#7B43A1', '#F2317A', '#FF9824', '#58CF6C'];

@@ -2,11 +2,49 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
 const sendMail = require("../utils/sendMail");
+const util = require("util");
+const redis = require("../utils/redis");
+
+//Promisiying redis
+
+redis.get = util.promisify(redis.get);
+redis.set = util.promisify(redis.set);
+
+//Utility method to sign JWT token
 
 const signToken = async (user, res) => {
-  const token = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
-  });
+  var token = await redis.get(`user:${user._id}:jwt`);
+
+  console.log(token, "jwt token from redis", typeof token);
+
+  if (!token) {
+    const cookieExpiresIn = process.env.COOKIE_EXPIRES_IN * 1;
+
+    const jwtExpiresIn = process.env.JWT_EXPIRES_IN;
+    token = await jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: jwtExpiresIn
+    });
+    //Set the jwt
+    // redis.hset(`user:${user._id}`, "jwt",`${jwt}`);
+    /*
+  Not using hset as we cannot set expire on hset
+  */
+
+    await redis.set(
+      `user:${user._id.toString()}:jwt`,
+      `${token}`,
+      "EX",
+      cookieExpiresIn * 24 * 60 * 60
+    );
+
+    await redis.set(
+      `jwt:${token}`,
+      `${user._id}`,
+      "EX",
+      cookieExpiresIn * 24 * 60 * 60
+    );
+  }
+
   res.cookie("jwt", token, {
     // maxAge:100000,
     httpOnly: true
@@ -14,7 +52,7 @@ const signToken = async (user, res) => {
 
   res.status(200).json({
     status: "success",
-    token,
+    // token,
     user
   });
 };
@@ -47,9 +85,10 @@ exports.signUp = async (req, res, next) => {
     if (!user) next(new Error("Cannot create a new user!"));
 
     req.user = user;
+
     await signToken(user, res);
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     if (error.code === 11000) {
       if (error.message.includes("email"))
         next(
@@ -63,6 +102,8 @@ exports.signUp = async (req, res, next) => {
             "Provided Username Exists!. Please use a different User name"
           )
         );
+    } else {
+      next(new Error(`${error.message}`));
     }
   }
   await sendMail(
@@ -114,17 +155,23 @@ exports.protect = async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
   }
   //we can also check whether a token is valid or not
-  console.log(token);
   if (!token) {
     //
     return next(new Error("Invalid token!"));
   }
-  const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+  var userId = await redis.get(`jwt:${token}`);
+  console.log(userId, "userId from redis");
+  if (!userId) {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    userId = payload._id;
+  }
+
   //check whether the password was changed after the token was issued
 
   //   console.log(payload, Date.now() / 1000);
 
-  const user = await User.findById(payload._id).select("-__v");
+  const user = await User.findById(userId).select("-__v");
 
   req.user = user;
   next();

@@ -1,6 +1,6 @@
 const Url = require("../models/Url");
 const User = require("../models/User");
-
+const validator = require("validator");
 const sendResponse = (res, data, statusCode) => {
   res.status(statusCode).json({
     data
@@ -36,7 +36,10 @@ const addSuggestedUrl = async (
       });
       return urlData;
     } catch (error) {
-      console.log(error, error.stack);
+      console.log(error, error.code, error.stack);
+      // if(error.code===11000){
+      //   return sendResponse(res,{status:"error",message:"This "})
+      // }
       return sendResponse(
         res,
         {
@@ -51,8 +54,8 @@ const addSuggestedUrl = async (
 
 exports.redirectUrl = async (req, res, next) => {
   const { shortUrl } = req.params;
-  const completeShortUrl =
-    req.protocol + "://" + req.get("host") + "/s/" + shortUrl;
+  const completeShortUrl = process.env.APP_URL + "/s/" + shortUrl;
+
   console.log(completeShortUrl);
   const urlData = await Url.findOne({ shortenedUrl: completeShortUrl });
   if (urlData) {
@@ -61,7 +64,7 @@ exports.redirectUrl = async (req, res, next) => {
     await urlData.save();
     return res.redirect(302, urlData.originalUrl);
   } else {
-    return res.redirect(301, `http://${req.get("host")}/home`);
+    return res.redirect(301, `${process.env.APP_URL}/home`);
   }
 };
 
@@ -91,15 +94,25 @@ exports.addUrl = async (req, res, next) => {
       status: "fail",
       message: "Original URL not provided!"
     });
+  else {
+    // const validation = new validator(originalUrl, URL);
+    if (!validator.default.isURL(originalUrl)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Original URL not valid!"
+      });
+    }
+  }
   var { suggestedShortUrl } = req.body;
 
   //If the user provides a suggestion
 
   if (suggestedShortUrl) {
+    const completeShortUrl = process.env.APP_URL + "/s/" + suggestedShortUrl;
     const urlData = await addSuggestedUrl(
       res,
       originalUrl,
-      suggestedShortUrl,
+      completeShortUrl,
       userId,
       (random = false)
     );

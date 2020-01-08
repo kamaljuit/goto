@@ -1,7 +1,7 @@
 import { takeEvery, put, all } from "redux-saga/effects";
 import urlTypes from "./url.types";
 import axios from "axios";
-import { setShortUrl, setShortUrlList } from "./url.action";
+import { setShortUrl, setShortUrlList, setUrlError } from "./url.action";
 
 //payload format {originalUrl,suggestedShortUrl}
 function* asyncGetUrlFromServer({ payload }) {
@@ -9,18 +9,24 @@ function* asyncGetUrlFromServer({ payload }) {
   if (payload.suggestedShortUrl) {
     suggestedShortUrl = payload.suggestedShortUrl;
   }
-  const response = yield axios(`/api/url`, {
-    method: "POST",
-    data: {
-      originalUrl: payload.originalUrl,
-      suggestedShortUrl
-    },
+  try {
+    const response = yield axios(`/api/url`, {
+      method: "POST",
+      data: {
+        originalUrl: payload.originalUrl,
+        suggestedShortUrl
+      },
 
-    withCredentials: true
-  });
-  const data = response.data.data;
-  console.log(data);
-  yield put(setShortUrl(data));
+      withCredentials: true
+    });
+    const data = response.data.data;
+    console.log(data);
+    yield put(setShortUrl(data));
+    yield put(setUrlError(undefined));
+  } catch (error) {
+    console.log(error, error.message, error.response);
+    yield put(setUrlError(error.response.data.message));
+  }
 }
 
 function* asyncGetUrlListFromServer({ payload }) {

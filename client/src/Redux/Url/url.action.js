@@ -31,3 +31,10 @@ export const getShortenedUrlList = () => {
     payload: null
   };
 };
+
+export const setUrlError = errorMessage => {
+  return {
+    type: UrlTypes.SET_URL_ERROR,
+    payload: errorMessage
+  };
+};

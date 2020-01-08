@@ -37,8 +37,8 @@ app.all("*", (req, res, next) => {
 
 //Global Error handler
 app.use((err, req, res, next) => {
-  console.log(err.stack);
-  res.status(err.statusCode || 500).json({
+  // console.log(err.stack);
+  return res.status(err.statusCode || 500).json({
     status: err.status,
     message: err.message || "Internal Server Error!"
   });

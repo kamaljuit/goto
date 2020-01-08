@@ -4,15 +4,22 @@ import HeaderComponent from "../../Components/Header/Header.component";
 import { Button } from "@material-ui/core";
 import TextOutputField from "../../Components/TextOutputField/TextOutputField.component";
 import FormInput from "../../Components/FormInput/FormInput.component";
-import { selectUrlsList } from "../../Redux/Url/url.selector";
+import { selectUrlsList, selectUrlError } from "../../Redux/Url/url.selector";
 import { createStructuredSelector } from "reselect";
 import { getShortUrlFromServer } from "../../Redux/Url/url.action";
-
+import UrlPieChart from "../../Components/UrlPieChart/UrlPieChart.component";
+import ExpansionPanel from "../../Components/ExpansionPanel/ExpansionPanel.component";
+import GridList from "../../Components/GridList/GridList.component";
+import { Container, InputAdornment } from "@material-ui/core";
+import "./Home.styles.scss";
 class Home extends React.Component {
   state = {
     originalUrl: "",
     userDefinedShortenedUrl: "",
-    showShortUrlInput: false
+    showShortUrlInput: false,
+    listOfShortUrls: undefined,
+    listOfColor: undefined,
+    listOfData: undefined
   };
 
   getCurrentShortUrl = () => {
@@ -30,52 +37,62 @@ class Home extends React.Component {
   };
 
   render() {
+    function randomStr(len, arr) {
+      var ans = "";
+      for (var i = len; i > 0; i--) {
+        ans += arr[Math.floor(Math.random() * arr.length)];
+      }
+      return ans;
+    }
+
+    //generating random colors
+    const listOfColor = [],
+      listOfShortUrls = [],
+      listOfData = [];
+    this.props.urls.forEach(url => {
+      listOfColor.push(`#${randomStr(6, "123456789abcdef")}`);
+      listOfData.push(url.hits);
+      listOfShortUrls.push(url.shortenedUrl);
+    });
+
+    console.log(listOfColor, listOfData, listOfShortUrls);
     return (
       <div>
         <div className="header">
           <HeaderComponent />
         </div>
-        <div className="url">
-          <div className="url-row">
-            <FormInput
-              id="original-url"
-              name="originalUrl"
-              type="text"
-              value={this.state.originalUrl}
-              handleChange={this.handleChange("originalUrl")}
-            />
-            <Button
-              onClick={() => {
-                this.props.dispatch(
-                  getShortUrlFromServer({
-                    originalUrl: this.state.originalUrl
-                  })
-                );
-              }}
-            >
-              Generate Random
-            </Button>
-          </div>
-          <div>
-            <span
-              onClick={() =>
-                this.setState({
-                  showShortUrlInput: !this.state.showShortUrlInput
-                })
-              }
-            >
-              Make your Own
-            </span>
-          </div>
-          {this.state.showShortUrlInput ? (
+        <Container maxWidth="md">
+          <div className="url">
             <div className="url-row">
+              <span className="heading">Original Url</span>
               <FormInput
-                id="userDefinedShortenedUrl"
-                name="userDefinedShortUrl"
+                id="original-url"
+                name="URL"
                 type="text"
-                value={this.state.userDefinedShortenedUrl}
-                handleChange={this.handleChange("userDefinedShortenedUrl")}
+                value={this.state.originalUrl}
+                handleChange={this.handleChange("originalUrl")}
               />
+            </div>
+            <div className="url-row">
+              <span className="heading" style={{ cursor: "pointer" }}>
+                Create yours
+              </span>
+              <div className="url-row">
+                <FormInput
+                  id="userDefinedShortenedUrl"
+                  name="Custom Url"
+                  type="text"
+                  value={this.state.userDefinedShortenedUrl}
+                  handleChange={this.handleChange("userDefinedShortenedUrl")}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      http://goto.cf/s/
+                    </InputAdornment>
+                  }
+                />
+              </div>
+            </div>
+            <div className="url-row">
               <Button
                 onClick={() => {
                   this.props.dispatch(
@@ -85,33 +102,88 @@ class Home extends React.Component {
                     })
                   );
                 }}
+                style={{
+                  backgroundColor: "#43A19E",
+                  color: "white"
+                }}
               >
-                Generate!
+                Short It!
               </Button>
+              {/* </div> */}
+              <TextOutputField
+                value={`${this.getCurrentShortUrl()}`}
+                className={this.getCurrentShortUrl() ? "heading" : ""}
+              />
             </div>
-          ) : null}
-          {/* </div> */}
-          <TextOutputField value={`${this.getCurrentShortUrl()}`} />
-        </div>
-        <div className="user-url-list">
-          {this.props.urls.map(url => {
-            return (
+            {this.props.urlError ? (
               <div>
-                <TextOutputField value={url.originalUrl} />
-                <TextOutputField value={url.shortenedUrl} />
+                <span className="error">{this.props.urlError}</span>
               </div>
-            );
-          })}
-        </div>
-        <div className="url-analytics"></div>
-        <div className="footer"></div>
+            ) : null}
+          </div>
+
+          <div className="user-url-list">
+            <ExpansionPanel heading="See list of your Short Urls">
+              <GridList data={this.props.urls} />
+            </ExpansionPanel>
+          </div>
+          <div className="url-analytics">
+            <div>
+              <span
+                style={{
+                  fontSize: "34px",
+                  margin: "20px 0",
+                  backgroundColor: "rgb(67, 161, 158)",
+                  borderRadius: "5px",
+                  color: "white"
+                }}
+              >
+                Url Analytics
+              </span>
+            </div>
+            <div className="url-list">
+              {this.props.urls && listOfData.length > 0 ? (
+                <div>
+                  <div>
+                    <div className="list" style={{ width: "105%" }}>
+                      <p>Url</p>
+                      <p>Redirects</p>
+                    </div>
+                    {listOfShortUrls.map((url, index) => {
+                      return (
+                        <div className="list">
+                          <TextOutputField
+                            value={url}
+                            style={{
+                              backgroundColor: `${listOfColor[index]}`,
+                              padding: "5px",
+                              borderRadius: "5px"
+                            }}
+                          />
+                          <div>{`${listOfData[index]}`}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div>
+                    <UrlPieChart data={listOfData} colors={listOfColor} />
+                  </div>
+                </div>
+              ) : (
+                <span>No Data Available!</span>
+              )}
+            </div>
+          </div>
+          <div className="footer"></div>
+        </Container>
       </div>
     );
   }
 }
 
 const mapStateToProps = createStructuredSelector({
-  urls: selectUrlsList
+  urls: selectUrlsList,
+  urlError: selectUrlError
 });
 
 export default connect(mapStateToProps)(Home);

@@ -1,0 +1,43 @@
+.url {
+  .url-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    .heading {
+      border: 2px solid cadetblue;
+      border-radius: 5px;
+      padding: 10px;
+      background: aliceblue;
+    }
+  }
+  .error {
+    border: 2px solid crimson;
+    background: white;
+    color: darkred;
+    font-size: larger;
+    border-radius: 5px;
+  }
+}
+
+.user-url-list {
+  margin: 20px 0;
+}
+
+.url-analytics {
+  .url-list {
+    display: flex;
+    margin: 20px 0px;
+    border: 2px solid darkgrey;
+
+    .list {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px;
+      border-radius: 5px;
+    }
+  }
+}
+// ['#43A19E', '#7B43A1', '#F2317A', '#FF9824', '#58CF6C'];

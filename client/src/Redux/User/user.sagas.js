@@ -1,5 +1,10 @@
 import { takeLatest, put, all } from "redux-saga/effects";
-import { setCurrentUser, setLoginError, logoutUser } from "./user.action";
+import {
+  setCurrentUser,
+  setLoginError,
+  logoutUser,
+  setSignupError
+} from "./user.action";
 import UserTypes from "./user.types";
 import axios from "axios";
 function* loginUserAsync(action) {
@@ -22,9 +27,9 @@ function* loginUserAsync(action) {
     //   yield put(setLoginError(responseJSON));
     // }
   } catch (error) {
-    console.log(error.name, error.stack);
+    console.log(error.name, error.stack, error.response);
     yield put(logoutUser());
-    yield put(setLoginError(error.response.data.data.message));
+    yield put(setLoginError(error.response.data.message));
   }
 }
 
@@ -39,11 +44,12 @@ function* signupUserAsync(action) {
         password: action.payload.password
       }
     });
-    const user = response.data.data.user;
+    const user = response.data.user;
     yield put(setCurrentUser(user));
   } catch (error) {
-    yield put(setLoginError(error.response.data.message));
+    console.log(error, error.response);
     yield put(logoutUser());
+    yield put(setSignupError(error.response.data.message));
   }
 }
 

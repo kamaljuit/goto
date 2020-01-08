@@ -18,7 +18,8 @@ import { createStructuredSelector } from "reselect";
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    border: "2px solid darkgrey"
   },
   margin: {
     margin: theme.spacing(1)
@@ -27,7 +28,14 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3)
   },
   textField: {
-    width: 200
+    width: 300
+  },
+  error: {
+    border: "2px solid crimson",
+    background: "white",
+    color: "darkred",
+    fontSize: "larger",
+    borderRadius: "5px"
   }
 }));
 
@@ -65,8 +73,13 @@ function SignUp(props) {
 
   return (
     <div className={classes.root}>
+      <div style={{ alignSelf: "center", margin: "auto" }}>SignUp Form</div>
+
       <div>
-        <form onSubmit={onSubmit}>
+        <form
+          onSubmit={onSubmit}
+          style={{ display: "flex", flexDirection: "column" }}
+        >
           <FormInput
             id="signup-name"
             name="Name"
@@ -103,8 +116,12 @@ function SignUp(props) {
               }
             />
           </FormControl>
-          {props.signUpError ? <span>{props.signUpError}</span> : null}
-          <Button onClick={onSubmit}>SignUp</Button>
+          {props.signUpError ? (
+            <span className={classes.error}>{props.signUpError}</span>
+          ) : null}
+          <Button onClick={onSubmit} style={{ backgroundColor: "darkcyan" }}>
+            SignUp
+          </Button>
         </form>
       </div>
     </div>

@@ -18,7 +18,8 @@ import { getShortenedUrlList } from "../../Redux/Url/url.action";
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    border: "2px solid darkgrey"
   },
   margin: {
     margin: theme.spacing(1)
@@ -27,7 +28,14 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3)
   },
   textField: {
-    width: 200
+    width: 300
+  },
+  error: {
+    border: "2px solid crimson",
+    background: "white",
+    color: "darkred",
+    fontSize: "larger",
+    borderRadius: "5px"
   }
 }));
 
@@ -64,8 +72,14 @@ function SignIn(props) {
 
   return (
     <div className={classes.root}>
+      {/* <p>Login</p> */}
+      <div style={{ alignSelf: "center", margin: "auto" }}>Login Form</div>
+
       <div>
-        <form onSubmit={onSubmit}>
+        <form
+          onSubmit={onSubmit}
+          style={{ display: "flex", flexDirection: "column" }}
+        >
           <FormInput
             id="signin-email"
             name="Email"
@@ -96,8 +110,12 @@ function SignIn(props) {
               }
             />
           </FormControl>
-          {props.loginError ? <span>{props.loginError}</span> : null}
-          <Button onClick={onSubmit}>Login</Button>
+          {props.loginError ? (
+            <span className={classes.error}>{props.loginError}</span>
+          ) : null}
+          <Button onClick={onSubmit} style={{ backgroundColor: "darkcyan" }}>
+            Login
+          </Button>
         </form>
       </div>
     </div>
