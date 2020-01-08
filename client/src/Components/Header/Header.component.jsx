@@ -1,13 +1,19 @@
+/**
+ * Header Component which reacts to the User's Authentication status.
+ * Independent and a Top Level Component and depends only on the user's authentication status
+ *
+ * TODO FOR FUTURE ==> Implement the Upgrade button and set it's onclick handler
+ */
+
 import React from "react";
 import { connect } from "react-redux";
-import { fade, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import MenuIcon from "@material-ui/icons/Menu";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import { logoutUser } from "../../Redux/User/user.action";
+import { logoutUserStart } from "../../Redux/User/user.action";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -32,7 +38,7 @@ function Header(props) {
         position="static"
         style={{ backgroundColor: "darkcyan", fontSize: "20px" }}
       >
-        <Toolbar>
+        <Toolbar style={{ minHeight: "unset" }}>
           <IconButton
             edge="start"
             className={classes.menuButton}
@@ -40,18 +46,12 @@ function Header(props) {
             aria-label="open drawer"
           >
             <MenuIcon />
+            <span style={{ margin: "0px 10px" }}>GoTo</span>
           </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
-            GoTo
-          </Typography>
-
           <div className={classes.grow} />
 
           {/* {props.user ? (
-            
-//Complete this feature later
-
-
+          
             <div>
               <IconButton
                 edge="start"
@@ -71,18 +71,17 @@ function Header(props) {
             edge="start"
             className={classes.menuButton}
             color="inherit"
+            onClick={() => {
+              props.dispatch(logoutUserStart());
+            }}
             aria-label="open drawer"
           >
             {props.user ? (
-              <span
-                onClick={() => {
-                  props.dispatch(logoutUser());
-                }}
-              >
+              <span>
                 SignOut <AccountCircle />
               </span>
             ) : (
-              <span onClick={() => <Link to="/signup" />}>SignIn</span>
+              <span>SignIn</span>
             )}
           </IconButton>
         </Toolbar>

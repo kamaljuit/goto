@@ -1,3 +1,6 @@
+/**
+ * Main HomePage Component
+ */
 import React from "react";
 import { connect } from "react-redux";
 import HeaderComponent from "../../Components/Header/Header.component";
@@ -6,7 +9,10 @@ import TextOutputField from "../../Components/TextOutputField/TextOutputField.co
 import FormInput from "../../Components/FormInput/FormInput.component";
 import { selectUrlsList, selectUrlError } from "../../Redux/Url/url.selector";
 import { createStructuredSelector } from "reselect";
-import { getShortUrlFromServer } from "../../Redux/Url/url.action";
+import {
+  getShortUrlFromServer,
+  getShortenedUrlList
+} from "../../Redux/Url/url.action";
 import UrlPieChart from "../../Components/UrlPieChart/UrlPieChart.component";
 import ExpansionPanel from "../../Components/ExpansionPanel/ExpansionPanel.component";
 import GridList from "../../Components/GridList/GridList.component";
@@ -22,12 +28,12 @@ class Home extends React.Component {
     listOfData: undefined
   };
 
+  componentDidMount() {
+    this.props.dispatch(getShortenedUrlList());
+  }
+
   getCurrentShortUrl = () => {
-    const url = this.props.urls.find(urlData => {
-      if (urlData) {
-        return urlData.originalUrl === this.state.originalUrl;
-      }
-    });
+    const url = this.props.urls[this.props.urls.length - 1];
     if (url) return url.shortenedUrl;
     else return "";
   };
@@ -70,7 +76,7 @@ class Home extends React.Component {
                 name="URL"
                 type="text"
                 value={this.state.originalUrl}
-                handleChange={this.handleChange("originalUrl")}
+                onChange={this.handleChange("originalUrl")}
               />
             </div>
             <div className="url-row">
@@ -83,7 +89,7 @@ class Home extends React.Component {
                   name="Custom Url"
                   type="text"
                   value={this.state.userDefinedShortenedUrl}
-                  handleChange={this.handleChange("userDefinedShortenedUrl")}
+                  onChange={this.handleChange("userDefinedShortenedUrl")}
                   startAdornment={
                     <InputAdornment position="start">
                       http://goto.cf/s/
@@ -101,6 +107,10 @@ class Home extends React.Component {
                       suggestedShortUrl: this.state.userDefinedShortenedUrl
                     })
                   );
+                  this.setState({
+                    originalUrl: "",
+                    userDefinedShortenedUrl: ""
+                  });
                 }}
                 style={{
                   backgroundColor: "#43A19E",
@@ -143,7 +153,16 @@ class Home extends React.Component {
             </div>
             <div className="url-list">
               {this.props.urls && listOfData.length > 0 ? (
-                <div>
+                <div
+                  style={{
+                    display: "flex",
+                    display: "flex",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    width: "fit-content",
+                    flexWrap: "wrap"
+                  }}
+                >
                   <div>
                     <div className="list" style={{ width: "105%" }}>
                       <p>Url</p>

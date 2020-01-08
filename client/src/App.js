@@ -14,12 +14,10 @@ function App(props) {
         <Route
           path="/signup"
           exact
-          render={() =>
-            props.user ? <Redirect to="/home" /> : <SignUpSignIn />
-          }
+          render={() => (props.user ? <Redirect to="/" /> : <SignUpSignIn />)}
         />
         <Route
-          path="/home"
+          path="/"
           exact
           render={() => (props.user ? <Home /> : <Redirect to="/signup" />)}
         />

@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
 import SignUp from "../../Components/SignUp/SignUp.component";
 import SignIn from "../../Components/SignIn/SignIn.component";
 import { Container } from "@material-ui/core";
 import Header from "../../Components/Header/Header.component";
-function SignUpSignIn() {
+
+import { setLoginError } from "../../Redux/User/user.action";
+
+function SignUpSignIn(props) {
+  useEffect(() => {
+    props.dispatch(setLoginError(undefined));
+  }, []);
+
   return (
     <div>
       <Header />
@@ -17,4 +25,4 @@ function SignUpSignIn() {
   );
 }
 
-export default SignUpSignIn;
+export default connect()(SignUpSignIn);

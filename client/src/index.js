@@ -8,9 +8,9 @@ import { PersistGate } from "redux-persist/integration/react";
 
 ReactDOM.render(
   <Provider store={store.store}>
-    {/* <PersistGate persistor={store.persistedStore}> */}
-    <App /*deferredPrompt={deferredPrompt} */ />
-    {/* </PersistGate> */}
+    <PersistGate persistor={store.persistedStore}>
+      <App />
+    </PersistGate>
   </Provider>,
   document.getElementById("root")
 );

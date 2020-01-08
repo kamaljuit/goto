@@ -5,17 +5,17 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 const persistConfig = {
   key: "root",
-  storage
+  storage,
   // whitelist:[],
-  //   blacklist: [] //Reducer states to whitelist or blacklist
+  blacklist: ["urlReducer"] //Reducer states to whitelist or blacklist
 };
 const rootReducer = combineReducers({
   User: userReducer,
   Url: urlReducer
 });
 
-// const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-// export default persistedReducer;
+export default persistedReducer;
 
-export default rootReducer;
+// export default rootReducer;

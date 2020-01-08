@@ -85,14 +85,14 @@ function SignUp(props) {
             name="Name"
             type="text"
             value={values.name}
-            handleChange={handleChange("name")}
+            onChange={handleChange("name")}
           />
           <FormInput
             id="signup-email"
             name="Email"
             type="email"
             value={values.email}
-            handleChange={handleChange("email")}
+            onChange={handleChange("email")}
           />
           <FormControl className={clsx(classes.margin, classes.textField)}>
             <InputLabel htmlFor="standard-adornment-password">
@@ -119,7 +119,7 @@ function SignUp(props) {
           {props.signUpError ? (
             <span className={classes.error}>{props.signUpError}</span>
           ) : null}
-          <Button onClick={onSubmit} style={{ backgroundColor: "darkcyan" }}>
+          <Button type="submit" style={{ backgroundColor: "darkcyan" }}>
             SignUp
           </Button>
         </form>

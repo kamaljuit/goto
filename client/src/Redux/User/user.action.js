@@ -55,3 +55,10 @@ export const logoutUser = () => {
     payload: ""
   };
 };
+
+export const logoutUserStart = () => {
+  return {
+    type: userTypes.LOGOUT_USER_START,
+    payload: ""
+  };
+};

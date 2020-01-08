@@ -1,4 +1,5 @@
 import UrlTypes from "./url.types";
+import userTypes from "../User/user.types";
 /*
 Format of url in urls list is [{originalUrl:"",shortenedUrl:""}]
 */
@@ -40,6 +41,8 @@ const UrlReducer = (state = INITIAL_STATE, action) => {
         ...state,
         error: action.payload
       };
+    case userTypes.LOGOUT_USER:
+      return INITIAL_STATE;
     default:
       return state;
   }

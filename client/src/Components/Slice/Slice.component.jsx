@@ -1,3 +1,6 @@
+/**
+ * Slice Component which produces a slice of a Pie Chart
+ */
 import React from "react";
 
 class Slice extends React.Component {
@@ -6,8 +9,7 @@ class Slice extends React.Component {
     x: 0,
     y: 0
   };
-
-  componentWillReceiveProps = function() {
+  UNSAFE_componentWillReceiveProps = function() {
     this.setState({ path: "" });
     this.animate();
   };

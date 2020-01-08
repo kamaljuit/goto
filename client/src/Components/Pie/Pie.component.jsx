@@ -1,3 +1,10 @@
+/**
+ * Pie component to display the Url Pie Chart.
+ * data:[] and colors:[] are required props. Also accepts other stylystic enhancement props
+ *
+ * BUG! ==> Cannot successfully render when only one index provides value
+ * TODO ==> Remove this BUG
+ */
 import React from "react";
 import Slice from "../Slice/Slice.component";
 const Pie = props => {

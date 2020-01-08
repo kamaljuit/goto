@@ -1,56 +1,26 @@
 const Url = require("../models/Url");
 const User = require("../models/User");
 const validator = require("validator");
-const sendResponse = (res, data, statusCode) => {
-  res.status(statusCode).json({
-    data
-  });
-};
+const sendResponse = require("../utils/sendResponse");
+const AppError = require("../utils/appError");
 
-const addSuggestedUrl = async (
-  res,
-  originalUrl,
-  suggestedShortUrl,
-  userId,
-  random = true
-) => {
-  var shortUrl = await Url.findOne({ shortenedUrl: suggestedShortUrl });
-  if (shortUrl) {
-    if (random) {
-      return false;
-    }
-    return sendResponse(
-      res,
-      {
-        status: "fail",
-        message: "Short Url Already exists"
-      },
-      400
-    );
-  } else {
-    try {
-      const urlData = await Url.create({
-        originalUrl: originalUrl,
-        shortenedUrl: suggestedShortUrl,
-        addedBy: userId
-      });
-      return urlData;
-    } catch (error) {
-      console.log(error, error.code, error.stack);
-      // if(error.code===11000){
-      //   return sendResponse(res,{status:"error",message:"This "})
-      // }
-      return sendResponse(
-        res,
-        {
-          status: "error",
-          message: "Cannot Create ShortUrl"
-        },
-        500
-      );
-    }
+//--------------Utility to Add Suggested URl ------------
+const addSuggestedUrl = async (res, originalUrl, suggestedShortUrl, userId) => {
+  try {
+    const urlData = await Url.create({
+      originalUrl: originalUrl,
+      shortenedUrl: suggestedShortUrl,
+      addedBy: userId
+    });
+    return urlData;
+  } catch (error) {
+    console.log(error);
+
+    return sendResponse(res, 500, null, error.message);
   }
 };
+
+//------------Redirect Utility ------------------
 
 exports.redirectUrl = async (req, res, next) => {
   const { shortUrl } = req.params;
@@ -68,6 +38,7 @@ exports.redirectUrl = async (req, res, next) => {
   }
 };
 
+//--------------Get the list of Url-----------------
 exports.getUrlList = async (req, res, next) => {
   const userId = req.user._id;
   console.log(userId);
@@ -76,51 +47,57 @@ exports.getUrlList = async (req, res, next) => {
   });
 
   if (user.urls.length > 0) {
-    return sendResponse(res, user.urls, 200);
+    return sendResponse(res, 200, user.urls);
   } else {
-    return sendResponse(res, [], 200);
+    return sendResponse(res, 200, []);
   }
 };
 
+//------------------Add Short Url----------------------
+
 exports.addUrl = async (req, res, next) => {
-  console.log(req.get("host"), "debug");
   const userId = req.user._id;
   const user = await User.findById(userId);
-
   if (!userId) return next(new Error("Not Authorized!"));
   var originalUrl = req.body.originalUrl;
-  if (!originalUrl)
-    return res.status(400).json({
-      status: "fail",
-      message: "Original URL not provided!"
-    });
+  if (!originalUrl) return next(new AppError("Original Url Not Provided", 400));
   else {
-    // const validation = new validator(originalUrl, URL);
     if (!validator.default.isURL(originalUrl)) {
-      return res.status(400).json({
-        status: "fail",
-        message: "Original URL not valid!"
-      });
+      return next(new AppError("Original URL not valid!", 400));
     }
   }
+
+  if (!(originalUrl.includes("http://") || originalUrl.includes("https://"))) {
+    originalUrl = "http://" + originalUrl;
+  }
+
   var { suggestedShortUrl } = req.body;
 
   //If the user provides a suggestion
-
-  if (suggestedShortUrl) {
-    const completeShortUrl = process.env.APP_URL + "/s/" + suggestedShortUrl;
-    const urlData = await addSuggestedUrl(
-      res,
-      originalUrl,
-      completeShortUrl,
-      userId,
-      (random = false)
-    );
-    user.urls.push(urlData._id);
-    await user.save();
-    return sendResponse(res, urlData, 201);
+  if (suggestedShortUrl && suggestedShortUrl.includes("http")) {
+    return next(new AppError("Just provide the last piece!", 400));
   }
+  if (suggestedShortUrl) {
+    console.log("Here!");
+    const completeShortUrl = process.env.APP_URL + "/s/" + suggestedShortUrl;
 
+    var shortUrl = await Url.findOne({ shortenedUrl: completeShortUrl });
+    if (shortUrl) {
+      return next(new AppError("Suggested Url Exists! Try another!", 400));
+    } else {
+      const urlData = await addSuggestedUrl(
+        res,
+        originalUrl,
+        completeShortUrl,
+        userId
+      );
+      if (urlData) {
+        user.urls.push(urlData._id);
+        await user.save();
+        return sendResponse(res, 201, urlData);
+      }
+    }
+  }
   //If user do not provides a suggestion
   else {
     function randomStr(len, arr) {
@@ -133,8 +110,7 @@ exports.addUrl = async (req, res, next) => {
     var num = 4;
     while (true) {
       var suggestedShortUrl = randomStr(num, "abcde12345abcde12345");
-      var completeShortUrl =
-        req.protocol + "://" + req.get("host") + "/s/" + suggestedShortUrl;
+      var completeShortUrl = process.env.APP_URL + "/s/" + suggestedShortUrl;
       const urlData = await addSuggestedUrl(
         res,
         originalUrl,
@@ -146,7 +122,7 @@ exports.addUrl = async (req, res, next) => {
         await user.save({
           validateBeforeSave: false
         });
-        return sendResponse(res, urlData, 201);
+        return sendResponse(res, 201, urlData);
       }
       num += 1;
     }

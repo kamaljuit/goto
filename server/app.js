@@ -7,6 +7,7 @@ const userRoutes = require("./routes/userRoutes");
 const urlRoutes = require("./routes/urlRoutes");
 const redirectRoutes = require("./routes/redirectRoutes");
 const app = express();
+const sendResponse = require("./utils/sendResponse");
 
 //--------------------- Important Middlewares --------------------
 
@@ -38,10 +39,10 @@ app.all("*", (req, res, next) => {
 //Global Error handler
 app.use((err, req, res, next) => {
   // console.log(err.stack);
-  return res.status(err.statusCode || 500).json({
-    status: err.status,
-    message: err.message || "Internal Server Error!"
-  });
+  const statusCode = err.statusCode || 500;
+  const statusMessage = err.statusMessage || "error";
+  const errorMessage = err.message || "Internal Server Error";
+  return sendResponse(res, statusCode, null, errorMessage);
 });
 
 module.exports = app;

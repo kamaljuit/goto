@@ -1,3 +1,8 @@
+/**
+ * SignIn Component
+ * Displays a Login Form and reacts to changes in Redux Global State
+ *
+ */
 import React from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
@@ -14,7 +19,6 @@ import { loginUserStart } from "../../Redux/User/user.action";
 import { connect } from "react-redux";
 import { selectLoginError } from "../../Redux/User/user.selector";
 import { createStructuredSelector } from "reselect";
-import { getShortenedUrlList } from "../../Redux/Url/url.action";
 const useStyles = makeStyles(theme => ({
   root: {
     display: "flex",
@@ -67,7 +71,6 @@ function SignIn(props) {
         password: values.password
       })
     );
-    props.dispatch(getShortenedUrlList());
   };
 
   return (
@@ -85,7 +88,8 @@ function SignIn(props) {
             name="Email"
             type="email"
             value={values.email}
-            handleChange={handleChange("email")}
+            onChange={handleChange("email")}
+            required
           />
 
           <FormControl className={clsx(classes.margin, classes.textField)}>
@@ -113,7 +117,8 @@ function SignIn(props) {
           {props.loginError ? (
             <span className={classes.error}>{props.loginError}</span>
           ) : null}
-          <Button onClick={onSubmit} style={{ backgroundColor: "darkcyan" }}>
+
+          <Button type="submit" style={{ backgroundColor: "darkcyan" }}>
             Login
           </Button>
         </form>

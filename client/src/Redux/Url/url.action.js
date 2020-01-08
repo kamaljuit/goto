@@ -1,3 +1,7 @@
+/**
+ * Url action functions that fires up actions
+ */
+
 import UrlTypes from "./url.types";
 
 //urlData format {originalUrl,suggestedShortUrl}

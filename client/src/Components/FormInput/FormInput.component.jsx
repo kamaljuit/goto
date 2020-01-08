@@ -1,3 +1,8 @@
+/**
+ *
+ * Material UI Input component modified for Project's Use Case but accepts same parameters
+ * As Material UI Input component
+ */
 import React from "react";
 import clsx from "clsx";
 import FormControl from "@material-ui/core/FormControl";
@@ -19,13 +24,7 @@ const FormInput = props => {
   return (
     <FormControl className={clsx(classes.margin, classes.textField)}>
       <InputLabel htmlFor={props.id}>{props.name}</InputLabel>
-      <Input
-        id={props.id}
-        type={props.type}
-        value={props.value}
-        onChange={props.handleChange}
-        startAdornment={props.startAdornment}
-      />
+      <Input {...props} />
     </FormControl>
   );
 };

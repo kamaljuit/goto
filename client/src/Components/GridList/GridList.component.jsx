@@ -1,5 +1,9 @@
+/**
+ * MaterialUI GridList modified for project's Use case.
+ * Accpets data:[] as a prop and renders a single column list
+ */
+
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import "./GridList.styles.scss";
@@ -17,7 +21,6 @@ export default function UrlGridList(props) {
           </div>
         </GridListTile>
         {props.data.map(url => (
-          //   <React.Fragment>
           <GridListTile key={url._id} style={{ height: "unset" }}>
             <div className="element">
               <div style={{ display: "flex" }}>

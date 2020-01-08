@@ -1,3 +1,8 @@
+/**
+ * 
+ * UrlPieChart Component that produces the PieChart (Url Analytics) using Pie Component.
+ * Passes props to the Pie Component
+ */
 import React from "react";
 import Pie from "../Pie/Pie.component";
 class UrlPieChart extends React.Component {
@@ -33,29 +38,3 @@ class UrlPieChart extends React.Component {
 }
 
 export default UrlPieChart;
-
-// var App = React.createClass({
-//   getInitialState: function() {
-//     return {
-//       data: [5, 12, 8, 3, 10]
-//     };
-//   },
-//   componentDidMount: function() {
-//     setInterval(
-//       function() {
-//         var dataSize = getRandomInt(2, 6),
-//           data = [];
-
-//         for (; dataSize--; ) {
-//           data.push(getRandomInt(1, 20));
-//         }
-
-//         this.setState({ data: data });
-//       }.bind(this),
-//       2000
-//     );
-//   },
-//   render: function() {
-
-//   }
-// });

@@ -4,7 +4,6 @@ const {
   updateUserSubscription
 } = require("../controller/userController");
 const authController = require("../controller/authController");
-//Diable these admin routes before deploying
 router
   .route("/")
   .get(authController.protect, getAllUsers)

@@ -1,3 +1,8 @@
+/**
+ * Sagas for URL API
+ * Getting and setting the URL List
+ */
+
 import { takeEvery, put, all } from "redux-saga/effects";
 import urlTypes from "./url.types";
 import axios from "axios";
@@ -10,7 +15,7 @@ function* asyncGetUrlFromServer({ payload }) {
     suggestedShortUrl = payload.suggestedShortUrl;
   }
   try {
-    const response = yield axios(`/api/url`, {
+    const response = yield axios(`${process.env.REACT_APP_APP_URL}/api/url`, {
       method: "POST",
       data: {
         originalUrl: payload.originalUrl,
@@ -20,7 +25,6 @@ function* asyncGetUrlFromServer({ payload }) {
       withCredentials: true
     });
     const data = response.data.data;
-    console.log(data);
     yield put(setShortUrl(data));
     yield put(setUrlError(undefined));
   } catch (error) {
@@ -30,11 +34,10 @@ function* asyncGetUrlFromServer({ payload }) {
 }
 
 function* asyncGetUrlListFromServer({ payload }) {
-  const response = yield axios(`/api/url`, {
+  const response = yield axios(`${process.env.REACT_APP_APP_URL}/api/url`, {
     method: "GET",
     withCredentials: true
   });
-  console.log(response, "Short Url List from server");
   const data = response.data.data;
   yield put(setShortUrlList(data));
 }

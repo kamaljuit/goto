@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
+const validator = require("validator");
+
 const UserSchema = new Schema({
   name: {
     type: String,
@@ -13,7 +15,8 @@ const UserSchema = new Schema({
     type: String,
     required: [true, "A user must have an Email Address!"],
     trim: true,
-    unique: true
+    unique: true,
+    validate: [validator.default.isEmail, "Invalid Email"]
   },
   img: String,
   urlLimit: {
