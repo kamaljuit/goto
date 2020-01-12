@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongodb
+  labels:
+    app: goto-server-mongodb
+spec:
+  volumes:
+    - name: goto-server-mongodb-vol
+      persistentVolumeClaim:
+        claimName: goto-server-pvc
+  containers:
+    - image: mongo
+      name: container1
+      command:
+        - mongod
+        - "--bind_ip"
+        - "0.0.0.0"
+      ports:
+        - containerPort: 27017
+      volumeMounts:
+        - name: goto-server-mongodb-vol
+          mountPath: /data/db

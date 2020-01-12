@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: goto-server-mongodb
+  name: goto-server-mongodb-service
+spec:
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    app: goto-server-mongodb

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: goto-server-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 1G
+  hostPath:
+    path: /root/mongodb

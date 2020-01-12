@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: goto-server-configs
+data:
+  PORT: "4000"
+  MONGODB_URI: mongodb://demo-server-mongodb-service:27017/demo
+  APP_URL: https://goto.cf
+  COOKIE_EXPIRES_IN: 7
+  REDIS_URL: redis://redis:6379
+  JWT_EXPIRES_IN: 7d

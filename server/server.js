@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-if (process.env.NODE_ENV !== "development") {
-  dotenv.config({
-    path: "./prod-config.env"
-  });
-} else {
+if (process.env.NODE_ENV === "development") {
   dotenv.config({
     path: "./dev-config.env"
   });

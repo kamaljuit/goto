@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goto-server-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: goto-server
+  template:
+    metadata:
+      labels:
+        app: goto-server
+    spec:
+      containers:
+        - image: kamaljuit1/goto-server:1
+          name: container1
+          ports:
+            - containerPort: 5000
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: goto-server-configs
+            - secretRef:
+                name: goto-server-secrets

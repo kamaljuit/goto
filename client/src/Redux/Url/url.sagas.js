@@ -15,7 +15,7 @@ function* asyncGetUrlFromServer({ payload }) {
     suggestedShortUrl = payload.suggestedShortUrl;
   }
   try {
-    const response = yield axios(`${process.env.REACT_APP_APP_URL}/api/url`, {
+    const response = yield axios(`${process.env.REACT_APP_API_URL}/api/url`, {
       method: "POST",
       data: {
         originalUrl: payload.originalUrl,
@@ -34,7 +34,7 @@ function* asyncGetUrlFromServer({ payload }) {
 }
 
 function* asyncGetUrlListFromServer({ payload }) {
-  const response = yield axios(`${process.env.REACT_APP_APP_URL}/api/url`, {
+  const response = yield axios(`${process.env.REACT_APP_API_URL}/api/url`, {
     method: "GET",
     withCredentials: true
   });

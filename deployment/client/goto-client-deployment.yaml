@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goto-client-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: goto-client-app
+  template:
+    metadata:
+      labels:
+        app: goto-client-app
+    spec:
+      containers:
+        - image: kamaljuit1/goto-client:1
+          name: goto-client-app-container
+          imagePullPolicy: Always
